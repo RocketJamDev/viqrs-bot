@@ -4,20 +4,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
-using std::uint8_t;
+#include "../include/QR-Code-generator/QrCode.hpp"
+#include "../include/QR-Code-generator/BitBuffer.hpp"
 using qrcodegen::QrCode;
-using qrcodegen::QrSegment;
-
-int test1(int a);
 
 int main() {
   const char *text = "Hola, Vips!";              // User-supplied text
-  const QrCode::Ecc errCorLvl = QrCode::Ecc::LOW;  // Error correction level
-
-  // Make and print the QR Code symbol
-  const QrCode qr = QrCode::encodeText(text, errCorLvl);
-  std::cout << qr.toSvgString(4) << std::endl;
+  QrCode::encodeText(text,  QrCode::Ecc::LOW);
 
   return 0;
 }
