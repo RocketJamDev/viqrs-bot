@@ -1,57 +1,66 @@
 #include <iostream>
-#include <string.h>
+#include <string>
+#include "vipscode.hpp"
 
 //Qr library
-#include "../include/QR-Code-generator/QrCode.hpp"
-#include "../include/QR-Code-generator/BitBuffer.hpp"
+#include "../lib/QR-Code-generator/QrCode.hpp"
+#include "../lib/QR-Code-generator/BitBuffer.hpp"
 
 //stb_image library
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "../include/stb_image_write/stb_image_write.h"
+#include "../lib/stb_image_write/stb_image_write.h"
 
 using qrcodegen::QrCode;
 
 #define PIX_PER_MODULE 10
 #define BORDER 4
 
-static void QRToPixels(const QrCode &qr, unsigned char* rgb, int QrImageWidth, int QrImageHeight);
+static void QRToImage(char const *filename, const QrCode &qr, int QrImageWidth, int QrImageHeight, unsigned char* rgb);
 static void paintModule(const QrCode &qr, int x, int y, unsigned char* rgb);
 
 int main() {
-  const char *text = "Hola, Vips!";              // User-supplied text
-  QrCode qr = QrCode::encodeText(text,  QrCode::Ecc::LOW);
 
-  // calculates size of QR image
-  int QrImageWidth = (qr.getSize() + BORDER * 2) * PIX_PER_MODULE * 3;
-  int QrImageHeight = (qr.getSize() + BORDER * 2) * PIX_PER_MODULE;
+  Vipscode vc = Vipscode(100200522953);
+  std::vector<Vipscode> vcodes = vc.getNextCodes(10);
 
-  int QrImageSize = QrImageWidth * QrImageHeight;
+  for(auto it = vcodes.begin(); it != vcodes.end(); it++) {
+    const char *text = it->getStringCode().c_str();
 
-  // allocates memory for pixels array
-  unsigned char* rgb = (unsigned char *) malloc (QrImageSize);
+    // encodes vips code to qr code
+    QrCode qr = QrCode::encodeText(text,  QrCode::Ecc::LOW);
 
-  // creates array of pixels
-  QRToPixels(qr, rgb, QrImageWidth, QrImageHeight);
+    // calculates size of QR image in QRToPixels
+    int imageWidth = (qr.getSize() + BORDER * 2) * PIX_PER_MODULE;
+    int imageHeight = imageWidth;
 
-  free(rgb);
+    // allocates memory for pixels array
+    int PNGArraySize = imageWidth * imageHeight * 3;
+    unsigned char* rgb = (unsigned char *) malloc (PNGArraySize);
 
-  std::cout << qr.toSvgString(4) << std::endl;
+    // creates qr image in data folder
+    std::string file = "data/" + it->getStringCode() + ".png";
+    const char *filename = file.c_str();
+    QRToImage(filename, qr, imageWidth, imageHeight, rgb);
+
+    free(rgb);
+
+  }
 
   return 0;
 }
 
-static void QRToPixels(const QrCode &qr, unsigned char* rgb, int QrImageWidth, int QrImageHeight) {
+static void QRToImage(char const *filename, const QrCode &qr, int imageWidth, int imageHeight, unsigned char* rgb) {
 
-  int QrImageSize = QrImageWidth * QrImageHeight;
+  int PNGArraySize = imageWidth * imageHeight * 3;
 
   // initialize array with white pixels
-  for(int i = 0; i < QrImageSize; i = i+3) {
+  for(int i = 0; i < PNGArraySize; i = i+3) {
     rgb[i] = 255;
     rgb[i+1] = 255;
     rgb[i+2] = 255;
   }
 
-  //x columns, y rows
+  // converts modules to pixels
 	for (int y = 0; y < qr.getSize(); y++) {
 		for (int x = 0; x < qr.getSize(); x++) {
       if (qr.getModule(x, y)) {
@@ -60,7 +69,8 @@ static void QRToPixels(const QrCode &qr, unsigned char* rgb, int QrImageWidth, i
 		}
 	}
 
-  stbi_write_bmp("demo.bmp", (qr.getSize() + BORDER * 2) * PIX_PER_MODULE, (qr.getSize() + BORDER * 2) * PIX_PER_MODULE, 3, rgb);
+  // wirtes in file
+  stbi_write_png(filename, imageWidth, imageHeight, 3, rgb, imageWidth * 3);
 }
 
 static void paintModule(const QrCode &qr, int x, int y, unsigned char* rgb) {
