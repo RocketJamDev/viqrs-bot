@@ -18,8 +18,9 @@ using qrcodegen::QrCode;
 static void QRToImage(char const *filename, const QrCode &qr, int QrImageWidth, int QrImageHeight, unsigned char* rgb);
 static void paintModule(const QrCode &qr, int x, int y, unsigned char* rgb);
 
-int main() {
+int main(int argc, char **argv) {
 
+  // put your code in the constructor
   Vipscode vc = Vipscode(100200522953);
   std::vector<Vipscode> vcodes = vc.getNextCodes(10);
 

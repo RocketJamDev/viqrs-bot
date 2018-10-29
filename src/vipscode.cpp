@@ -18,3 +18,13 @@ std::vector<Vipscode> Vipscode::getNextCodes(int num) const {
 
   return vcodes;
 }
+
+std::vector<Vipscode> Vipscode::getPreviousCodes(int num) const {
+  std::vector<Vipscode> vcodes;
+
+  for (int i = 0; i < num; i++) {
+    vcodes.push_back(Vipscode(_number - i));
+  }
+
+  return vcodes;
+}

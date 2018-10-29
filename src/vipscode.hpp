@@ -16,6 +16,7 @@ public:
   void setNumber(long int number) { _number = number; }
   std::string getStringCode() const;
   std::vector<Vipscode> getNextCodes(int num) const;
+  std::vector<Vipscode> getPreviousCodes(int num) const;
 
 private:
   long int _number;
