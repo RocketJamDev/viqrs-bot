@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
   // put your code in the constructor
   Vipscode vc = Vipscode(atoi(argv[1]));
-  std::vector<Vipscode> vcodes = vc.getNextCodes(10);
+  std::vector<Vipscode> vcodes = vc.getNextCodes(atoi(argv[2]));
 
   for(auto it = vcodes.begin(); it != vcodes.end(); it++) {
     const char *text = it->getStringCode().c_str();
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     unsigned char* rgb = (unsigned char *) malloc (PNGArraySize);
 
     // creates qr image in data folder
-    std::string file = "data/" + it->getStringCode() + ".png";
+    std::string file = argv[3] + it->getStringCode() + ".png";
     const char *filename = file.c_str();
     QRToImage(filename, qr, imageWidth, imageHeight, rgb);
 

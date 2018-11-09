@@ -22,3 +22,7 @@ vipscode.o: src/vipscode.hpp
 
 clean:
 	$(RM) count *.o *~
+
+# Deletes data from all users! Use this just for debugging reasons
+clean_data:
+	rm -rf data/*
