@@ -29,6 +29,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+def number(code):
+    #return int(code.split("?")[1].split("A")[0]
+    num = code.split("?")[1].split("A")[0]
+    return int(num)
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
@@ -40,7 +44,6 @@ def start(bot, update):
 
     # TODO: check if dir already exist
     mkdir(data_dir)
-
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
@@ -65,16 +68,17 @@ def code(bot, update):
             data_dir = "data/" + str(user_id) + "/"
             data_files = data_dir + "/*"
 
-            system("rm -f " + data_files)
             system("./bin/viqrs " + ori_code + " " + num + " " + data_dir)
 
-            print "Debug"
+            files = listdir(data_dir)
 
-            for f in listdir(data_dir):
-                print f
-                print data_dir
+            files.sort(key=number)
+
+            for f in files:
                 update.message.reply_text(f)
                 bot.send_photo(chat_id=update.message.chat.id, photo=open(data_dir + f, 'rb'))
+            
+            system("rm -f " + data_files)
                 
         else:
             update.message.reply_text('Error in arguments. Check /help for more information')
