@@ -21,7 +21,7 @@ static void paintModule(const QrCode &qr, int x, int y, unsigned char* rgb);
 int main(int argc, char **argv) {
 
   // put your code in the constructor
-  Vipscode vc = Vipscode(atoi(argv[1]));
+  Vipscode vc = Vipscode(argv[1]);
   std::vector<Vipscode> vcodes = vc.getNextCodes(atoi(argv[2]));
 
   for(auto it = vcodes.begin(); it != vcodes.end(); it++) {
