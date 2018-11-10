@@ -2,6 +2,7 @@
 //ClubVipsApp?xxxxxxxxxxxxA
 #include <string>
 #include <vector>
+#include <iostream>
 
 class Vipscode {
 
@@ -11,7 +12,7 @@ public:
   static const std::string charEnd;
 
   Vipscode() {}
-  Vipscode(long int number) : _number(number) {}
+  Vipscode(long int number) : _number(number) { }
   Vipscode(std::string code);
   long int getNumber() const { return _number; }
   void setNumber(long int number) { _number = number; }

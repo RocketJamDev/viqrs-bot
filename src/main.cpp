@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 #include "vipscode.hpp"
 
 //Qr library
@@ -20,12 +21,24 @@ static void paintModule(const QrCode &qr, int x, int y, unsigned char* rgb);
 
 int main(int argc, char **argv) {
 
-  // put your code in the constructor
+  // takes the original code and the number of gen. codes from the arguments
   Vipscode vc = Vipscode(argv[1]);
-  std::vector<Vipscode> vcodes = vc.getNextCodes(atoi(argv[2]));
+  std::vector<Vipscode> vcodes;
+
+  // checks if user wants next or previous codes.
+  // TODO: generate random code.
+  if (strcmp(argv[2], "-n") == 0) {
+    vcodes = vc.getNextCodes(atoi(argv[3]));
+  } else if (!strcmp(argv[2], "-p")){
+    vcodes = vc.getPreviousCodes(atoi(argv[3]));
+  } else {
+    std::cout << "Error in arguments format." << std::endl;
+  }
 
   for(auto it = vcodes.begin(); it != vcodes.end(); it++) {
-    const char *text = it->getStringCode().c_str();
+    std::string code = it->getStringCode();
+    char * text = new char [code.length()+1];
+    std::strcpy (text, code.c_str());
 
     // encodes vips code to qr code
     QrCode qr = QrCode::encodeText(text,  QrCode::Ecc::LOW);
@@ -39,7 +52,7 @@ int main(int argc, char **argv) {
     unsigned char* rgb = (unsigned char *) malloc (PNGArraySize);
 
     // creates qr image in data folder
-    std::string file = argv[3] + it->getStringCode() + ".png";
+    std::string file = argv[4] + it->getStringCode() + ".png";
     const char *filename = file.c_str();
     QRToImage(filename, qr, imageWidth, imageHeight, rgb);
 

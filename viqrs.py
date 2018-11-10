@@ -38,7 +38,7 @@ def number(code):
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    update.message.reply_text("Hi! I'm ViQRs. I'm ready to generate your codes. Check /help for information about what I can do.")
     user_id = update.message.from_user.id
     data_dir = "data/" + str(user_id)
 
@@ -47,42 +47,66 @@ def start(bot, update):
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('/code [original_code] [number]')
+    update.message.reply_text('/code [original_code] [mode] [number]')
+    update.message.reply_text('[original_code]: ClubVips?[12_digit_number]A')
+    update.message.reply_text('[mode]: -p: for generating previos codes and -n for generating next codes')
+    update.message.reply_text('[number]: 1-10')
 
 def code(bot, update):
     """Sends generated codes."""
     command = update.message.text.split()
 
-    if len(command) != 3:
+    # checks if the number of arguments is correct
+    if len(command) != 4:
         update.message.reply_text('Error in arguments. Check /help for more information')
         return
 
     ori_code = update.message.text.split()[1]
-    num = update.message.text.split()[2]
+    mode = update.message.text.split()[2]
+    num = update.message.text.split()[3]
 
+    # checks correction of the arguments
+    
+    # original code
+    ini = "ClubVipsApp?"
+    end = "A"
+    
+    if(ini != ori_code[:len(ini)] or 
+       end != ori_code[len(ori_code) - 1] or
+       len(ori_code[len(ini):len(ori_code) - 1]) != 12):
+
+       print ori_code[:len(ini)]
+       print ori_code[len(ori_code) - 1]
+       print ori_code[len(ini):len(ori_code) - 1]
+       
+       update.message.reply_text("Error in the format of the original code. Check /help for more information")
+       return 
+
+    # mode
+    if (mode != "-n" and mode != "-p"):
+        print mode
+        update.message.reply_text("Error in the format of the mode. Check /help for more information")
+        return 
+
+    # number
     if int(num) > 10:
-        update.message.reply_text("I'm sorry. I'm afraid I can't let you do that")
-    else:
-        if ori_code and num:
-            user_id = update.message.from_user.id
-            data_dir = "data/" + str(user_id) + "/"
-            data_files = data_dir + "/*"
+        update.message.reply_text("I'm sorry, " + update.message.from_user.first_name + ". I'm afraid I can't let you do that.")
+        update.message.reply_text("Request ten codes or less.")
 
-            system("./bin/viqrs " + ori_code + " " + num + " " + data_dir)
 
-            files = listdir(data_dir)
-
-            files.sort(key=number)
-
-            for f in files:
-                update.message.reply_text(f)
-                bot.send_photo(chat_id=update.message.chat.id, photo=open(data_dir + f, 'rb'))
-            
-            system("rm -f " + data_files)
-                
-        else:
-            update.message.reply_text('Error in arguments. Check /help for more information')
-
+    user_id = update.message.from_user.id
+    data_dir = "data/" + str(user_id) + "/"
+    data_files = data_dir + "/*"
+    system("./bin/viqrs " + ori_code + " " + mode + " " + num + " " + data_dir)
+    files = listdir(data_dir)
+    files.sort(key=number)
+    
+    for f in files:
+        update.message.reply_text(f)
+        bot.send_photo(chat_id=update.message.chat.id, photo=open(data_dir + f, 'rb'))
+ 
+    system("rm -f " + data_files)
+             
     return
 
 def error(bot, update, error):
@@ -90,11 +114,10 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
-
 def main():
     """Start the bot."""
     # Create the EventHandler and pass it your bot's token.
-    updater = Updater("TOKEN")
+    updater = Updater("744312405:AAG7Fae_B5CYfMae5U8OxElS__iRXDY72fg")
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
