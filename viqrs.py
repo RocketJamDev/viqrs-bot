@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#Ver 1.0.0
 
 """Simple Bot to reply to Telegram messages.
 
