@@ -7,9 +7,6 @@ const std::string Vipscode::strIni = "ClubVipsApp?";
 const std::string Vipscode::charEnd = "A";
 
 Vipscode::Vipscode(std::string code) {
-
-    std::cout << "Constructor de string" << std::endl;
-  
     std::string::size_type i = code.find(strIni);
 
     if (i != std::string::npos)
